@@ -1,0 +1,21 @@
+ <%- include('../layouts/header.ejs') %>
+  </head>
+  <body>
+    <%- include('../layouts/navigation.ejs') %>
+    <% if(orders.length <= 0 ){ %>
+      <h1>No products are there</h1>
+    <% } else {%>
+        <ul>
+          <% orders.forEach(order => { %>
+            <li>
+                <h1>#<%= order._id %></h1>
+                <ul>
+                      <% order.products.forEach(product => { %>
+                        <li><%= product.title %></li>
+                      <% }) %>
+                </ul>
+            </li>
+          <% }) %>
+        </ul>
+    <% } %>
+    <%- include('../layouts/footer.ejs')%>

@@ -1,0 +1,32 @@
+<%- include('../layouts/header.ejs') %>
+  </head>
+  <body>
+    <%- include('../layouts/navigation.ejs') %>
+    <form method="POST" action="<% if (editing) { %> /edit-product <% } else { %> /product <% } %>" >
+      <div>
+        <div>
+          <label for="name">Name</label>
+           <input type="text" id="name" name="name" value="<% if(editing) { %><%= product.title %><% } else { %><% } %> " />
+        </div>
+       <div>
+          <label for="image">Image URL</label>
+           <input type="text" id="image" name="imageUrl" value="<% if(editing) {%><%= product.imageUrl %><% } else { %><% }%>"/>
+        </div>
+        <div>
+          <label for="amount">Amount</label>
+           <input type="text" id="amount" name="amount" value="<% if(editing) {%><%= product.price %><% } else { %><% }%>"/>
+        </div>
+        <div>
+          <label for="description">Description</label>
+           <input type="text" id="description" name="description" value="<% if(editing) {%><%= product.description %><% } else { %> <% }%>"/>
+        </div>
+        
+          <% if(editing){ %>
+            <input type="hidden" name="productId" value="<%= product._id %>"/>
+          <%}%>
+          <button class="btn" type="submit"><%if (editing==='true') { %> Update Product <% } else { %> Add Product <% } %></button>
+             
+      </div>
+        
+    </form>
+  <%- include('../layouts/footer.ejs')%>
