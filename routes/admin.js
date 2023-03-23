@@ -22,13 +22,13 @@ router.get('/product-list', shopController.getProducts)
 
 // router.get('/checkout', shopController.getCheckout)
 
-// router.get('/orders', shopController.getOrders)
+router.get('/orders', shopController.getOrders)
 
 router.get('/product/:productId', shopController.getProductDetails)
 
 router.post('/remove-cart-product', shopController.removeCartProducts)
 
-// router.post('/add-to-bag', shopController.addOrderItems)
+router.post('/add-to-bag', shopController.addOrderItems)
 
 
 

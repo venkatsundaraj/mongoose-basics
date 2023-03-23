@@ -1,6 +1,5 @@
 const Product = require('../module/product')
-
-
+const Order = require('../module/order')
 
 const getIndex = (req,res,next)=>{
     
@@ -96,13 +95,66 @@ const removeCartProducts = function(req,res,next){
     })
 }
 
+
+
+const addOrderItems = function(req,res,next){
+
+    req.user
+    .populate('cart.items.productId')
+    .then(data=>{
+        const productsAll = data.cart.items.map(productItem=>{
+            
+            return {quantity:productItem.quantity, product:{...productItem.productId._doc}}
+        })
+        
+        
+        const order = new Order({
+            products:productsAll,
+            user:{
+                name:req.user.name,
+                userId:req.user
+            },
+            
+        })
+
+        return order.save()
+    })
+    .then(data=>{
+        return req.user.clearCart()
+    })
+    .then(data=>{
+        res.redirect('/orders')
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+    
+}
+
+const getOrders= function(req,res,next){
+    Order.find({'user.userId': req.user._id})
+    .then((order)=>{
+        console.log(order[0].products)
+        res.render('shop/orders',{
+        title:'Orders',
+        path: 'shop/orders',
+        orders:order
+    })
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+}
+
 module.exports = {
     getIndex : getIndex,
     getProducts : getProducts,
     getProductDetails:getProductDetails,
     getPostCartItems:getPostCartItems,
     getAllCartItems:getAllCartItems,
-    removeCartProducts:removeCartProducts
+    removeCartProducts:removeCartProducts,
+    addOrderItems:addOrderItems,
+    getOrders:getOrders
 }
 
 /*const path = require('path')
