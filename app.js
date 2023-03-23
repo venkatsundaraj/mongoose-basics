@@ -5,28 +5,26 @@ const rootDir = require('./utilities/path')
 const adminRouter = require('./routes/admin')
 const bodyParser = require('body-parser')
 const ejs = require('ejs')
-const sequelize = require('./utilities/database')
-const mongoConnect = require('./utilities/database').mongoConnect
+// const sequelize = require('./utilities/database')
+// const mongoConnect = require('./utilities/database').mongoConnect
 const User = require('./module/user')
 const Product = require('./module/product')
-
+const mongoose = require('mongoose')
 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 app.use((req,res,next)=>{
-    User.findUserById('641511771054a6b818ba88f9')
+    User.findById('641958922e12df7b489f43d4')
     .then(user=>{
-        
-        req.user = new User(user.email, user.password, user.cart, user._id)
+        // console.log(user)
+        req.user = user
         
         next()
     })
     .catch(err=>{
         console.log(err)
     })
-
-    
 })
 
 
@@ -52,6 +50,27 @@ app.use((req,res,next)=>{
     })
 })
 
-mongoConnect(()=>{
-    app.listen(3000)
+mongoose.connect('mongodb+srv://venkatsundaraj:zvLfLwdLBP94k2Ad@cluster0.6rckxqf.mongodb.net/shop?retryWrites=true&w=majority')
+.then(data=>{
+    User.findOne()
+    .then(user=>{
+        if(!user){
+            const user = new User({
+                name:'venkatsundaraj',
+                email:'venkatesh@gmail.com',
+                cart:{
+                    items:[]
+                }
+            })
+            user.save()
+        }
+        app.listen(3000, ()=>{
+            console.log('Server started')
+        })
+    })
+    
+
+})
+.catch(err=>{
+    console.log(err)
 })

@@ -1,4 +1,66 @@
-const mongoDb = require('mongodb')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+
+const userSchema = new Schema({
+    name :{
+        type:String,
+        required:true
+    },
+    email :{
+        type:String,
+        required:true
+    },
+    cart:{items:[{productId:{
+        type:Schema.Types.ObjectId,
+        ref:"Product",
+        required:true,
+    }, quantity:{
+        type:Number,
+        required:true
+    }}]}
+})
+
+userSchema.methods.addToCart = function(product){
+    const cartItemIndex = this.cart.items.findIndex(cartProduct=>cartProduct.productId.toString()===product.id.toString())
+    
+    const updatedCarts = [...this.cart.items]
+    let newQuantity = 1
+
+    if(cartItemIndex>=0){
+        const oldQuantity = this.cart.items[cartItemIndex].quantity
+        updatedCarts[cartItemIndex].quantity = oldQuantity + newQuantity
+    }else{
+        updatedCarts.push({
+            productId:product._id,
+            quantity:newQuantity
+        })
+    }
+
+    const updatedCartItems = {
+        items:updatedCarts
+    }
+
+    this.cart = updatedCartItems
+    return this.save()
+
+}
+
+
+userSchema.methods.removeProductFromCart = function(productId){
+    const updatedCarts = this.cart.items.filter(item=>{
+        return item.productId.toString() !== productId.toString()
+    })
+
+    this.cart.items = updatedCarts
+    return this.save()
+}
+
+
+module.exports = mongoose.model('User', userSchema)
+
+
+/*const mongoDb = require('mongodb')
 
 const getDb = require('../utilities/database').getDb
 
@@ -154,4 +216,4 @@ class User {
     }
 }
 
-module.exports = User
+module.exports = User*/
